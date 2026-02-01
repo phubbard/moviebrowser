@@ -197,11 +197,10 @@ Database is created automatically on first run at `movies.sqlite3`.
 
 1. **Clone and setup**
    ```bash
-   cd ~
-   git clone git@github.com:phubbard/moviebrowser.git
+   git clone https://github.com/phubbard/moviebrowser.git
    cd moviebrowser
-   python3 -m venv venv
-   source venv/bin/activate
+   python3 -m venv .venv
+   source .venv/bin/activate
    pip install -r requirements.txt
    ```
 
@@ -213,24 +212,30 @@ Database is created automatically on first run at `movies.sqlite3`.
 
 3. **Install as system service**
    ```bash
-   chmod +x deployment/install-service.sh
    ./deployment/install-service.sh
    ```
 
-The app will now start automatically on boot at `http://your-ip:5150`
+The automated installer will:
+- Detect your username and app directory
+- Find your virtual environment (`.venv` or `venv`)
+- Create the systemd service and enable it
+- Start the service automatically
 
-See [deployment/INSTALL_SERVICE.md](deployment/INSTALL_SERVICE.md) for detailed instructions.
+Access the app at `http://your-pi-ip:5150`
+
+See [deployment/INSTALL_SERVICE.md](deployment/INSTALL_SERVICE.md) for detailed instructions and troubleshooting.
 
 ### Deployment Notes
 
-- Set `DEBUG=false` in production (default)
+- Set `DEBUG=false` in `.env` for production (enables network access on 0.0.0.0)
+- Set `DEBUG=true` for local development (binds to 127.0.0.1 only)
 - Use a real `APP_SECRET_KEY` in production (auto-generated if not set)
 - Consider adding basic auth at reverse proxy level
 - SQLite is suitable for small-scale deployment
 - Poster cache grows over time (no expiration yet)
 - Rate limit: TMDb allows 50 requests/second
 - Service auto-restarts on failure
-- Logs stored in `logs/` directory
+- Logs stored in `logs/` directory and via `journalctl`
 
 ## Credits
 

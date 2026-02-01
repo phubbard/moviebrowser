@@ -633,4 +633,6 @@ def poster(size: str, tmdb_id: int):
 if __name__ == "__main__":
     init_db()
     debug_mode = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
-    app.run(host="127.0.0.1", port=int(os.getenv("PORT", "5150")), debug=debug_mode)
+    # Bind to 0.0.0.0 in production for network access, 127.0.0.1 in debug mode
+    host = "127.0.0.1" if debug_mode else "0.0.0.0"
+    app.run(host=host, port=int(os.getenv("PORT", "5150")), debug=debug_mode)

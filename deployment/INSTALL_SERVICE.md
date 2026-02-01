@@ -2,19 +2,18 @@
 
 ## Raspberry Pi / Linux (systemd) - Recommended
 
-### Initial Setup
+### Quick Install (Automated)
 
 1. **Clone the repository**
    ```bash
-   cd ~
-   git clone git@github.com:phubbard/moviebrowser.git
+   git clone https://github.com/phubbard/moviebrowser.git
    cd moviebrowser
    ```
 
 2. **Set up Python environment**
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate
+   python3 -m venv .venv
+   source .venv/bin/activate
    pip install -r requirements.txt
    ```
 
@@ -24,54 +23,71 @@
    nano .env  # Add your TMDB_API_KEY
    ```
 
-4. **Create logs directory**
+4. **Run the automated installer**
    ```bash
-   mkdir -p logs
+   ./deployment/install-service.sh
    ```
 
-5. **Test the app manually first**
+That's it! The installer will:
+- Auto-detect your username and app directory
+- Detect your virtual environment (`.venv` or `venv`)
+- Create the logs directory
+- Generate and install the systemd service file
+- Enable and start the service
+- Show you the service status
+
+The app will be accessible at `http://your-pi-ip:5150`
+
+### Manual Install (Advanced)
+
+If you prefer to install manually or customize the setup:
+
+1. **Follow steps 1-3 from Quick Install above**
+
+2. **Test the app manually first**
    ```bash
    DEBUG=true python app.py
    # Visit http://your-pi-ip:5150
    # Press Ctrl+C when done testing
    ```
 
-### Install as System Service
-
-1. **Update the service file with your username** (if not using 'pi')
+3. **Edit the service file if needed**
    ```bash
    nano deployment/moviebrowser.service
-   # Change User=pi and paths if needed
+   # Update User, paths, or other settings
    ```
 
-2. **Copy the service file**
+4. **Copy the service file**
    ```bash
    sudo cp deployment/moviebrowser.service /etc/systemd/system/
    ```
 
-3. **Enable and start the service**
+5. **Enable and start the service**
    ```bash
    sudo systemctl daemon-reload
    sudo systemctl enable moviebrowser
    sudo systemctl start moviebrowser
    ```
 
-4. **Check status**
+6. **Check status**
    ```bash
    sudo systemctl status moviebrowser
    ```
 
-5. **View logs**
-   ```bash
-   # Follow live logs
-   sudo journalctl -u moviebrowser -f
-
-   # Or view log files directly
-   tail -f ~/moviebrowser/logs/moviebrowser.log
-   tail -f ~/moviebrowser/logs/moviebrowser.error.log
-   ```
-
 ### Managing the Service
+
+**View logs:**
+```bash
+# Follow live logs
+sudo journalctl -u moviebrowser -f
+
+# Or view log files directly
+tail -f logs/moviebrowser.log
+tail -f logs/moviebrowser.error.log
+
+# View recent logs
+sudo journalctl -u moviebrowser -n 50
+```
 
 **Stop the service:**
 ```bash
@@ -88,18 +104,36 @@ sudo systemctl restart moviebrowser
 sudo systemctl disable moviebrowser
 ```
 
-**View recent logs:**
-```bash
-sudo journalctl -u moviebrowser -n 50
-```
-
 ### Updating the App
 
 ```bash
-cd ~/moviebrowser
+cd moviebrowser  # or wherever you installed it
 git pull
 sudo systemctl restart moviebrowser
 ```
+
+### Troubleshooting
+
+**Service won't start:**
+```bash
+# Check the service status for errors
+sudo systemctl status moviebrowser
+
+# View detailed logs
+sudo journalctl -u moviebrowser -n 100
+
+# Verify your .env file has TMDB_API_KEY set
+grep TMDB_API_KEY .env
+
+# Test running manually
+source .venv/bin/activate
+DEBUG=true python app.py
+```
+
+**Can't access from other devices:**
+- Make sure `DEBUG=false` in your `.env` file (production mode binds to 0.0.0.0)
+- Check your firewall: `sudo ufw allow 5150` (if using ufw)
+- Verify the service is running: `sudo systemctl status moviebrowser`
 
 ## macOS (launchd) - For Development
 
@@ -143,39 +177,25 @@ launchctl unload ~/Library/LaunchAgents/com.phubbard.moviebrowser.plist
 rm ~/Library/LaunchAgents/com.phubbard.moviebrowser.plist
 ```
 
-## Linux (systemd)
+## Other Linux Systems
 
-1. **Copy the service file**
-   ```bash
-   sudo cp deployment/moviebrowser.service /etc/systemd/system/
-   ```
+The installation process is the same as Raspberry Pi. Just use the automated installer:
 
-2. **Edit the service file to update paths and user**
-   ```bash
-   sudo nano /etc/systemd/system/moviebrowser.service
-   # Update User, WorkingDirectory, and ExecStart paths
-   ```
+```bash
+./deployment/install-service.sh
+```
 
-3. **Enable and start the service**
-   ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable moviebrowser
-   sudo systemctl start moviebrowser
-   ```
+The script automatically detects:
+- Your username (even if run with sudo)
+- Your app directory location
+- Your virtual environment (`.venv` or `venv`)
+- Loads environment variables from `.env`
 
-4. **Check status**
-   ```bash
-   sudo systemctl status moviebrowser
-   ```
+## Important Notes
 
-5. **View logs**
-   ```bash
-   sudo journalctl -u moviebrowser -f
-   ```
-
-## Notes
-
-- The service runs with `DEBUG=False` for production
-- Logs are written to `logs/` directory
-- Service restarts automatically if it crashes (KeepAlive/Restart=always)
-- Make sure your `.env` file is properly configured before starting
+- **Production mode**: Set `DEBUG=false` in `.env` for production (enables network access via 0.0.0.0)
+- **Development mode**: Set `DEBUG=true` for local development (binds to 127.0.0.1 only)
+- **Logs**: Written to `logs/` directory and viewable via `journalctl`
+- **Auto-restart**: Service automatically restarts if it crashes
+- **Virtual environment**: Supports both `.venv` and `venv` naming conventions
+- **Environment variables**: Loaded automatically from `.env` file by the service
