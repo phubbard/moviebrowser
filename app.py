@@ -41,9 +41,23 @@ def check_csrf():
 @app.context_processor
 def inject_globals():
     ensure_csrf()
+
+    # Search link configuration
+    search_links = []
+    link1_label = os.getenv("SEARCH_LINK_1_LABEL")
+    link1_url = os.getenv("SEARCH_LINK_1_URL")
+    link2_label = os.getenv("SEARCH_LINK_2_LABEL")
+    link2_url = os.getenv("SEARCH_LINK_2_URL")
+
+    if link1_label and link1_url:
+        search_links.append({"label": link1_label, "url_template": link1_url})
+    if link2_label and link2_url:
+        search_links.append({"label": link2_label, "url_template": link2_url})
+
     return {
         "basket_count": len(basket_ids()),
         "csrf_token": session.get("csrf", ""),
+        "search_links": search_links,
     }
 
 def prefetch_poster(tmdb_id: int, size: str = "w342"):

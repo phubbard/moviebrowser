@@ -41,11 +41,14 @@
             {{ m.overview }}
           </p>
           {% endif %}
+          {% if search_links %}
           <p class="mini" style="margin:4px 0 0 0;">
-            <a href="https://www.justwatch.com/us/search?q={{ m.title|urlencode }}" target="_blank" rel="noopener">JustWatch</a>
-            ·
-            <a href="http://nas.phfactor.net:8310/add/new?term={{ m.title|urlencode }}" target="_blank" rel="noopener">Local</a>
+            {% for link in search_links %}
+              {% if not loop.first %}·{% endif %}
+              <a href="{{ link.url_template.replace('{title}', m.title|urlencode) }}" target="_blank" rel="noopener">{{ link.label }}</a>
+            {% endfor %}
           </p>
+          {% endif %}
         </div>
       {% endfor %}
     </div>

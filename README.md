@@ -87,6 +87,22 @@ Environment variables (optional):
 - `TMDB_REGION` - Default: "US"
 - `TMDB_LANGUAGE` - Default: "en-US"
 - `PORT` - Default: 5150
+- `SEARCH_LINK_1_LABEL` / `SEARCH_LINK_1_URL` - First search link (e.g., JustWatch)
+- `SEARCH_LINK_2_LABEL` / `SEARCH_LINK_2_URL` - Second search link (e.g., local server)
+
+### Customizing Search Links
+
+Edit `.env` to customize the search links shown on each movie card:
+
+```bash
+SEARCH_LINK_1_LABEL=Google
+SEARCH_LINK_1_URL=https://www.google.com/search?q={title}+movie
+
+SEARCH_LINK_2_LABEL=IMDb
+SEARCH_LINK_2_URL=https://www.imdb.com/find?q={title}
+```
+
+Use `{title}` as a placeholder - it will be replaced with the movie title (URL-encoded automatically). You can configure 0-2 search links. Leave blank to disable.
 
 ## Usage
 

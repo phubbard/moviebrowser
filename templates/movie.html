@@ -16,11 +16,14 @@
       {{ movie.runtime or "—" }} min
     </p>
 
+    {% if search_links %}
     <p class="mini" style="margin:0 0 12px 0;">
-      <a href="https://www.justwatch.com/us/search?q={{ movie.title|urlencode }}" target="_blank" rel="noopener">JustWatch</a>
-      ·
-      <a href="http://nas.phfactor.net:8310/add/new?term={{ movie.title|urlencode }}" target="_blank" rel="noopener">Local</a>
+      {% for link in search_links %}
+        {% if not loop.first %}·{% endif %}
+        <a href="{{ link.url_template.replace('{title}', movie.title|urlencode) }}" target="_blank" rel="noopener">{{ link.label }}</a>
+      {% endfor %}
     </p>
+    {% endif %}
 
     {% if directors %}
       <p><b>Director{% if directors|length > 1 %}s{% endif %}:</b>
