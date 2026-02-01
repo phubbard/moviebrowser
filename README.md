@@ -1,5 +1,7 @@
 # Movie Browser (No-JS)
 
+![Movie Browser Screenshot](screenshots/screenshot.png)
+
 A lightweight, server-rendered web app for browsing movies with a focus on women-directed films. Built with Flask and TMDb API, featuring zero client-side JavaScript.
 
 ## Features
