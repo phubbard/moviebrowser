@@ -65,7 +65,7 @@ A lightweight, server-rendered web app for browsing movies with a focus on women
 
 6. **Open your browser**
    ```
-   http://127.0.0.1:5000
+   http://127.0.0.1:5150
    ```
 
 ## Getting a TMDb API Key
@@ -86,7 +86,7 @@ Environment variables (optional):
 - `APP_SECRET_KEY` - Flask secret key (auto-generated if not set)
 - `TMDB_REGION` - Default: "US"
 - `TMDB_LANGUAGE` - Default: "en-US"
-- `PORT` - Default: 5000
+- `PORT` - Default: 5150
 
 ## Usage
 
