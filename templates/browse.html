@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="actionbar">
+  <form method="get" action="{{ url_for('browse') }}" class="controls">
+    <input type="hidden" name="loading" value="1">
+    <div>
+      <label>Search</label>
+      <input name="q" value="{{ q or '' }}" placeholder="e.g. Alien">
+    </div>
+
+    <div>
+      <label>Year min</label>
+      <input name="year_min" value="{{ year_min or '' }}" inputmode="numeric" placeholder="1970">
+    </div>
+
+    <div>
+      <label>Year max</label>
+      <input name="year_max" value="{{ year_max or '' }}" inputmode="numeric" placeholder="2026">
+    </div>
+
+    <div>
+      <label>Women-directed</label>
+      <select name="women">
+        <option value="0" {% if not women %}selected{% endif %}>No</option>
+        <option value="1" {% if women %}selected{% endif %}>Yes</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Sort</label>
+      <select name="sort">
+        <option value="popularity" {% if sort=='popularity' %}selected{% endif %}>Popularity</option>
+        <option value="rating" {% if sort=='rating' %}selected{% endif %}>Rating</option>
+        <option value="votes" {% if sort=='votes' %}selected{% endif %}>Vote count</option>
+        <option value="year" {% if sort=='year' %}selected{% endif %}>Year</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Source</label>
+      <select name="src">
+        <option value="popular" {% if src=='popular' %}selected{% endif %}>Popular</option>
+        <option value="search" {% if src=='search' %}selected{% endif %}>Search</option>
+      </select>
+    </div>
+
+    <div>
+      <button type="submit">Apply</button>
+    </div>
+  </form>
+
+  <p class="mini" style="margin:8px 0 0 0;">
+    Tip: tick posters, then <b>Add to basket</b> to carry picks across pages.
+    ·
+    <a href="{{ toggle_plots_url }}">{% if show_plots %}Hide plots{% else %}Show plots{% endif %}</a>
+  </p>
+</div>
+
+<form method="post" action="{{ url_for('selection_action') }}">
+  <input type="hidden" name="return_to" value="{{ request.full_path }}">
+  <input type="hidden" name="csrf" value="{{ csrf_token }}">
+
+  <div class="grid">
+    {% for m in movies %}
+      <div class="card">
+        {% if m.poster_path %}
+          <a href="{{ url_for('movie', tmdb_id=m.tmdb_id) }}">
+            <img class="poster" loading="lazy"
+                 src="{{ url_for('poster', size='w342', tmdb_id=m.tmdb_id) }}"
+                 alt="Poster for {{ m.title }}">
+          </a>
+        {% else %}
+          <div class="poster" style="aspect-ratio:2/3;border:1px dashed rgba(127,127,127,0.35);display:flex;align-items:center;justify-content:center;">
+            No poster
+          </div>
+        {% endif %}
+
+        <p style="margin:8px 0 4px 0;">
+          <label>
+            <input type="checkbox" name="pick" value="{{ m.tmdb_id }}">
+            <b>{{ m.title }}</b>
+          </label>
+        </p>
+        <p class="mini" style="margin:0;">
+          {{ m.year or "—" }} · ★ {{ "%.1f"|format(m.vote_avg or 0) }} ({{ m.vote_count or 0 }})
+        </p>
+        {% if show_plots and m.overview %}
+        <p class="mini" style="margin:8px 0; line-height:1.4;">
+          {{ m.overview }}
+        </p>
+        {% endif %}
+        <p class="mini" style="margin:4px 0 0 0;">
+          <a href="https://www.justwatch.com/us/search?q={{ m.title|urlencode }}" target="_blank" rel="noopener">JustWatch</a>
+          ·
+          <a href="http://nas.phfactor.net:8310/add/new?term={{ m.title|urlencode }}" target="_blank" rel="noopener">Local</a>
+        </p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="footer-actions">
+    <div class="controls">
+      <button name="action" value="selected">Show selected (this page)</button>
+      <button name="action" value="add_to_basket">Add selected to basket</button>
+      <button name="action" value="remove_from_basket">Remove selected from basket</button>
+      <button name="action" value="clear_basket" type="submit">Clear basket</button>
+    </div>
+  </div>
+</form>
+
+<nav class="mini" style="margin-top:14px;">
+  {% if page > 1 %}
+    <a href="{{ page_url(page-1) }}">← Prev</a>
+  {% endif %}
+  <span style="margin:0 10px;">Page {{ page }}</span>
+  {% if has_next %}
+    <a href="{{ page_url(page+1) }}">Next →</a>
+  {% endif %}
+</nav>
+
+{% if women and total_movies_inspected > 0 %}
+<p class="mini" style="text-align:center; margin-top:20px; opacity:0.7;">
+  This page: {{ movies_shown }} movie{{ 's' if movies_shown != 1 else '' }} found from {{ total_movies_inspected }} inspected
+  {% if tmdb_pages_fetched > 1 %}({{ tmdb_pages_fetched }} TMDb pages){% endif %}
+</p>
+{% endif %}
+
+{% endblock %}

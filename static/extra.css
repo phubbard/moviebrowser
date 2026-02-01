@@ -1,0 +1,72 @@
+/* Works with Water.css; keep it tiny. */
+body {
+  max-width: none;
+  padding: 0 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 520px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+.card {
+  border: 1px solid rgba(127,127,127,0.35);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.poster {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+}
+
+.actionbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--background-body, #fff);
+  border-bottom: 1px solid rgba(127,127,127,0.35);
+  padding: 10px 0;
+  margin-bottom: 12px;
+}
+
+.mini {
+  font-size: 0.9em;
+  opacity: 0.85;
+}
+
+.badge {
+  display: inline-block;
+  border: 1px solid rgba(127,127,127,0.35);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.85em;
+  opacity: 0.9;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+}
+.controls > * {
+  margin: 0;
+}
+
+.footer-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  background: var(--background-body, #fff);
+  border-top: 1px solid rgba(127,127,127,0.35);
+  padding: 10px 0;
+  margin-top: 16px;
+}

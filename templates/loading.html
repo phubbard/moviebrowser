@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="text-align:center; padding:60px 20px;">
+  <h2>Loading movies...</h2>
+  <p class="mini" style="margin-top:20px;">
+    Fetching and filtering movies from TMDb.<br>
+    This may take a few moments.
+  </p>
+  <p style="margin-top:30px; font-size:2em;">⏳</p>
+</div>
+
+<meta http-equiv="refresh" content="0;url={{ target_url }}">
+{% endblock %}

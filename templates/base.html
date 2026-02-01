@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>{{ title or "Movies" }}</title>
+
+  <!-- Water.css (responsive, minimal) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='extra.css') }}">
+</head>
+<body>
+  <header>
+    <h2 style="margin-bottom:0.25rem;">Movie Browser</h2>
+    <p class="mini" style="margin-top:0;">
+      <a href="{{ url_for('browse') }}">Browse</a> ·
+      <a href="{{ url_for('basket') }}">Basket ({{ basket_count }})</a>
+    </p>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="mini">
+    <hr>
+    <p>
+      No-JS. Server-rendered. Posters via <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDb</a>. © 2026 Paul Hubbard
+    </p>
+  </footer>
+</body>
+</html>

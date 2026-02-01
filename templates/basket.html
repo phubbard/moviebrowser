@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>Your basket</h3>
+<p class="mini">
+  No login required. This basket lives in your browser session cookie.
+  To share, create a share link below.
+  ·
+  <a href="{{ toggle_plots_url }}">{% if show_plots %}Hide plots{% else %}Show plots{% endif %}</a>
+</p>
+
+{% if movies %}
+  <form method="post" action="{{ url_for('basket_remove') }}">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+
+    <div class="controls" style="margin-bottom:10px;">
+      <button type="submit">Remove checked</button>
+    </div>
+
+    <div class="grid">
+      {% for m in movies %}
+        <div class="card">
+          {% if m.poster_path %}
+            <a href="{{ url_for('movie', tmdb_id=m.tmdb_id) }}">
+              <img class="poster" loading="lazy"
+                   src="{{ url_for('poster', size='w342', tmdb_id=m.tmdb_id) }}"
+                   alt="Poster for {{ m.title }}">
+            </a>
+          {% endif %}
+          <p style="margin:8px 0 4px 0;">
+            <label>
+              <input type="checkbox" name="pick" value="{{ m.tmdb_id }}">
+              <b>{{ m.title }}</b>
+            </label>
+          </p>
+          <p class="mini" style="margin:0;">
+            {{ m.year or "—" }} · ★ {{ "%.1f"|format(m.vote_avg or 0) }} ({{ m.vote_count or 0 }})
+          </p>
+          {% if show_plots and m.overview %}
+          <p class="mini" style="margin:8px 0; line-height:1.4;">
+            {{ m.overview }}
+          </p>
+          {% endif %}
+          <p class="mini" style="margin:4px 0 0 0;">
+            <a href="https://www.justwatch.com/us/search?q={{ m.title|urlencode }}" target="_blank" rel="noopener">JustWatch</a>
+            ·
+            <a href="http://nas.phfactor.net:8310/add/new?term={{ m.title|urlencode }}" target="_blank" rel="noopener">Local</a>
+          </p>
+        </div>
+      {% endfor %}
+    </div>
+  </form>
+
+  <hr>
+
+  <form method="post" action="{{ url_for('basket_share') }}" class="controls">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <div>
+      <label>Share title (optional)</label>
+      <input name="title" placeholder="e.g. Bike night picks">
+    </div>
+    <div>
+      <button type="submit">Create share link</button>
+    </div>
+  </form>
+
+  <form method="post" action="{{ url_for('basket_clear') }}" style="margin-top:10px;">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <button type="submit">Clear basket</button>
+  </form>
+
+{% else %}
+  <p>Your basket is empty.</p>
+{% endif %}
+
+{% endblock %}
