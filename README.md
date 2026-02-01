@@ -33,8 +33,8 @@ A lightweight, server-rendered web app for browsing movies with a focus on women
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
-   cd movielist
+   git clone git@github.com:phubbard/moviebrowser.git
+   cd moviebrowser
    ```
 
 2. **Create a virtual environment**
