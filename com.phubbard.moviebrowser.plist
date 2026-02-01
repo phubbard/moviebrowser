@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.phubbard.moviebrowser</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/pfh/code/movielist/venv/bin/python</string>
+        <string>/Users/pfh/code/movielist/app.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/pfh/code/movielist</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/pfh/code/movielist/logs/moviebrowser.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/pfh/code/movielist/logs/moviebrowser.error.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/pfh/code/movielist/venv/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+</dict>
+</plist>

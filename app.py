@@ -632,4 +632,5 @@ def poster(size: str, tmdb_id: int):
 
 if __name__ == "__main__":
     init_db()
-    app.run(host="127.0.0.1", port=int(os.getenv("PORT", "5150")), debug=True)
+    debug_mode = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
+    app.run(host="127.0.0.1", port=int(os.getenv("PORT", "5150")), debug=debug_mode)

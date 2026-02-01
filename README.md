@@ -191,13 +191,46 @@ python app.py
 
 Database is created automatically on first run at `movies.sqlite3`.
 
-## Deployment Notes
+## Deployment
 
-- Use a real `APP_SECRET_KEY` in production
+### Quick Deploy on Raspberry Pi / Linux
+
+1. **Clone and setup**
+   ```bash
+   cd ~
+   git clone git@github.com:phubbard/moviebrowser.git
+   cd moviebrowser
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+2. **Configure**
+   ```bash
+   cp .env.example .env
+   nano .env  # Add your TMDB_API_KEY
+   ```
+
+3. **Install as system service**
+   ```bash
+   chmod +x deployment/install-service.sh
+   ./deployment/install-service.sh
+   ```
+
+The app will now start automatically on boot at `http://your-ip:5150`
+
+See [deployment/INSTALL_SERVICE.md](deployment/INSTALL_SERVICE.md) for detailed instructions.
+
+### Deployment Notes
+
+- Set `DEBUG=false` in production (default)
+- Use a real `APP_SECRET_KEY` in production (auto-generated if not set)
 - Consider adding basic auth at reverse proxy level
 - SQLite is suitable for small-scale deployment
 - Poster cache grows over time (no expiration yet)
 - Rate limit: TMDb allows 50 requests/second
+- Service auto-restarts on failure
+- Logs stored in `logs/` directory
 
 ## Credits
 

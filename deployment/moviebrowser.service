@@ -1,0 +1,20 @@
+[Unit]
+Description=Movie Browser (No-JS)
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/moviebrowser
+Environment="PATH=/home/pi/moviebrowser/venv/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=/home/pi/moviebrowser/venv/bin/python /home/pi/moviebrowser/app.py
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=append:/home/pi/moviebrowser/logs/moviebrowser.log
+StandardError=append:/home/pi/moviebrowser/logs/moviebrowser.error.log
+
+[Install]
+WantedBy=multi-user.target
