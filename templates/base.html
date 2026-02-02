@@ -26,6 +26,7 @@
     <hr>
     <p>
       No-JS. Server-rendered. Posters via <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDb</a>. © 2026 Paul Hubbard
+      {% if total_movie_count is not none %} · Total movies: {{ total_movie_count }}{% endif %}
     </p>
   </footer>
 </body>

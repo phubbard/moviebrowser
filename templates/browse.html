@@ -3,7 +3,6 @@
 
 <div class="actionbar">
   <form method="get" action="{{ url_for('browse') }}" class="controls">
-    <input type="hidden" name="loading" value="1">
     <div>
       <label>Search</label>
       <input name="q" value="{{ q or '' }}" placeholder="e.g. Alien">
@@ -20,28 +19,12 @@
     </div>
 
     <div>
-      <label>Women-directed</label>
-      <select name="women">
-        <option value="0" {% if not women %}selected{% endif %}>No</option>
-        <option value="1" {% if women %}selected{% endif %}>Yes</option>
-      </select>
-    </div>
-
-    <div>
       <label>Sort</label>
       <select name="sort">
         <option value="popularity" {% if sort=='popularity' %}selected{% endif %}>Popularity</option>
         <option value="rating" {% if sort=='rating' %}selected{% endif %}>Rating</option>
         <option value="votes" {% if sort=='votes' %}selected{% endif %}>Vote count</option>
         <option value="year" {% if sort=='year' %}selected{% endif %}>Year</option>
-      </select>
-    </div>
-
-    <div>
-      <label>Source</label>
-      <select name="src">
-        <option value="popular" {% if src=='popular' %}selected{% endif %}>Popular</option>
-        <option value="search" {% if src=='search' %}selected{% endif %}>Search</option>
       </select>
     </div>
 
@@ -121,12 +104,5 @@
     <a href="{{ page_url(page+1) }}">Next →</a>
   {% endif %}
 </nav>
-
-{% if women and total_movies_inspected > 0 %}
-<p class="mini" style="text-align:center; margin-top:20px; opacity:0.7;">
-  This page: {{ movies_shown }} movie{{ 's' if movies_shown != 1 else '' }} found from {{ total_movies_inspected }} inspected
-  {% if tmdb_pages_fetched > 1 %}({{ tmdb_pages_fetched }} TMDb pages){% endif %}
-</p>
-{% endif %}
 
 {% endblock %}

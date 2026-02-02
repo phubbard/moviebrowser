@@ -2,19 +2,19 @@
 
 ![Movie Browser Screenshot](screenshots/screenshot.png)
 
-A lightweight, server-rendered web app for browsing movies with a focus on women-directed films. Built with Flask and TMDb API, featuring zero client-side JavaScript.
+A lightweight, server-rendered web app for browsing movies with a focus on women-directed films. Built with Flask and TMDb data, featuring zero client-side JavaScript.
 
 ## Features
 
-- 🎬 Browse movies from TMDb (popular or search)
-- 👩‍🎨 Filter by women-directed films
+- 🎬 Browse cached movies (no live API calls during requests)
+- 👩‍🎨 100% women-directed catalog
 - 🗓️ Year range filtering
 - 🛒 Session-based basket (no login required)
 - 🔗 Shareable movie lists
 - 📱 Responsive design (Water.css)
 - 🖼️ Poster caching for fast loads
 - 🔍 Search links (JustWatch integration)
-- 📊 Shows fetch stats (movies inspected per page)
+- 🧱 Background hydrator for women-directed coverage
 
 ## Tech Stack
 
@@ -29,7 +29,7 @@ A lightweight, server-rendered web app for browsing movies with a focus on women
 ### Prerequisites
 
 - Python 3.10+
-- TMDb API key ([get one here](https://www.themoviedb.org/settings/api))
+- TMDb API key for the background hydrator ([get one here](https://www.themoviedb.org/settings/api))
 
 ### Setup
 
@@ -60,12 +60,17 @@ A lightweight, server-rendered web app for browsing movies with a focus on women
    TMDB_API_KEY=your_api_key_here
    ```
 
-5. **Run the application**
+5. **Run the background hydrator (weekly)**
+   ```bash
+   python tmdb_ingest.py --mode weekly --rate 20
+   ```
+
+6. **Run the application**
    ```bash
    python app.py
    ```
 
-6. **Open your browser**
+7. **Open your browser**
    ```
    http://127.0.0.1:5150
    ```
@@ -84,7 +89,7 @@ A lightweight, server-rendered web app for browsing movies with a focus on women
 
 Environment variables (optional):
 
-- `TMDB_API_KEY` - **Required**. Your TMDb API key
+- `TMDB_API_KEY` - **Required** for the background hydrator
 - `APP_SECRET_KEY` - Flask secret key (auto-generated if not set)
 - `TMDB_REGION` - Default: "US"
 - `TMDB_LANGUAGE` - Default: "en-US"
@@ -110,7 +115,7 @@ Use `{title}` as a placeholder - it will be replaced with the movie title (URL-e
 
 ### Browsing Movies
 
-1. **Women-directed filter** is on by default
+1. All results are women-directed
 2. Use filters for year range, sort order, etc.
 3. Click "Apply" to refresh results
 4. Toggle "Show plots" to see movie synopses
@@ -138,6 +143,8 @@ movielist/
 ├── app.py              # Flask routes and logic
 ├── db.py               # Database connection
 ├── tmdb.py             # TMDb API client
+├── tmdb_ingest.py      # Background hydration pipeline
+├── store.py            # Shared DB helpers
 ├── schema.sql          # Database schema
 ├── requirements.txt    # Python dependencies
 ├── .env                # Environment variables (not in git)
@@ -159,20 +166,17 @@ movielist/
 
 ### Women-Directed Filter
 
-When active, the app:
-1. Fetches pages from TMDb's popular/search endpoints
-2. Hydrates director credits for each movie
-3. Checks director gender from TMDb person data
-4. Filters to only show movies with female directors
-5. Continues fetching until a full page is collected
-
-The footer shows stats: e.g., "20 movies found from 221 inspected (12 TMDb pages)"
+The app only shows movies already cached in SQLite. A background job:
+1. Ingests TMDb export IDs into a queue
+2. Hydrates director credits for each ID
+3. If women-directed, hydrates full movie details and posters
+4. The browse page queries only the cached data
 
 ### Poster Caching
 
 - First request: Downloads from TMDb and saves to `cache/posters/`
 - Subsequent requests: Serves from disk
-- Pre-fetches posters for women-directed movies during filtering
+- Pre-fetches posters for women-directed movies during background hydration
 
 ### No JavaScript Architecture
 
@@ -180,7 +184,28 @@ All interactions use standard HTML forms and links:
 - Filters → GET parameters
 - Actions → POST forms
 - State → Session cookies
-- Loading → Meta refresh
+
+## Background Hydration
+
+Run weekly (recommended):
+```bash
+python tmdb_ingest.py --mode weekly --rate 20
+```
+
+Run just the export ingest:
+```bash
+python tmdb_ingest.py --mode export
+```
+
+Run the changes ingest:
+```bash
+python tmdb_ingest.py --mode changes --start-date 2026-01-26 --end-date 2026-02-02
+```
+
+Process the queue:
+```bash
+python tmdb_ingest.py --mode worker --rate 20
+```
 
 ## Development
 

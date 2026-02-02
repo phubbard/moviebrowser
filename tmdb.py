@@ -34,6 +34,14 @@ class TMDb:
     def movie_credits(self, tmdb_id: int):
         return self._get(f"/movie/{tmdb_id}/credits")
 
+    def movie_changes(self, start_date: str | None = None, end_date: str | None = None, page: int = 1):
+        params = {"page": page}
+        if start_date:
+            params["start_date"] = start_date
+        if end_date:
+            params["end_date"] = end_date
+        return self._get("/movie/changes", **params)
+
     @staticmethod
     def poster_url(poster_path: str, size: str = "w342") -> str:
         return f"{TMDB_IMG}/{size}{poster_path}"
